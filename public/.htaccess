@@ -1,0 +1,34 @@
+# My Bangladesh Life Map: Apache / LiteSpeed (Hostinger, cPanel). Static site + share.php for shared map links.
+Options -MultiViews -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Shared map links: /s/{id} (page with preview tags) and /s/{id}.jpg (preview image).
+  RewriteRule ^mbd-share(/|$) - [F,L]
+  RewriteRule ^s/([a-z0-9]{6,16})\.jpg$ share.php?img=$1 [QSA,L]
+  RewriteRule ^s/([a-z0-9]{6,16})/?$ share.php?id=$1 [QSA,L]
+
+  # Any path that isn't a real file is an app route (/create, /create/result, /map/ayan-demo, …).
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# Hashed build assets never change; index.html must always be fresh.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "^index\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>

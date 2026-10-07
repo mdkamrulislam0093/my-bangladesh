@@ -12,12 +12,13 @@ npm run dev        # http://localhost:5173
 npm run build      # → dist/
 ```
 
-The site is **fully static**: no backend, no database, no API keys.
+The site is static, plus one small PHP file (`public/share.php`) that turns a shared map into a link whose preview is the map. There's no database and no API keys.
 
 ### Deploy (Hostinger, cPanel or any static host)
 
 1. Run `npm run build`.
-2. Upload the **contents** of `dist/` to the site's web root. In File Manager, turn on "show hidden files" so `.htaccess` is uploaded too; it sends old links (like `/create`) to the page.
+2. Upload the **contents** of `dist/` to the site's web root (`index.html`, `assets/`, `share.php`, `.htaccess`…). In File Manager, turn on "show hidden files" so `.htaccess` is uploaded too; it routes `/s/{id}` map links to `share.php` and old links to the page.
+   Shared maps are stored in `mbd-share/` (one folder above the web root when writable, otherwise inside it, with access blocked). Back it up now and then.
 3. On another host (Netlify, Vercel, Cloudflare Pages), make every unknown path serve `index.html`.
 
 Optional build-time settings:
@@ -60,6 +61,13 @@ scripts/build-map.mjs     raw GeoJSON → simplified, projected SVG paths
 - Each image holds the title, the map with district names and the life-journey line, a timeline with years, a personal quote, numbers (districts, divisions, life chapters) and an invitation.
 
 On phones, "Share image" opens the system share menu (Facebook, Messenger, WhatsApp…), and "Download" works everywhere.
+
+**Map links.** When the share window opens, a 1200×630 preview of the map, its title and a one-line summary are uploaded to `share.php`, which returns `/s/{id}`.
+- **Facebook:** opens its share dialog with that link.
+- **WhatsApp:** gets the caption with that link.
+- **Messenger:** gets the link (app on phones; copied and pasted on computers).
+
+All three show the map as the preview picture. Opening the link shows the map with a "make your own" button. If no PHP server is reachable (e.g. `npm run dev`), sharing falls back to copying or downloading the image.
 
 **Map data.** The boundaries come from [geoBoundaries](https://www.geoboundaries.org) BGD ADM2 (Bangladesh Bureau of Statistics / OCHA ROAP, CC BY 3.0 IGO). Run `npm run build:map` to regenerate them; it installs `mapshaper` temporarily, so that tool stays out of the project's dependencies.
 

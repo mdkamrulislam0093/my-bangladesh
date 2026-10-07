@@ -541,6 +541,31 @@ function layoutStory(ctx: CanvasRenderingContext2D, map: LifeMap, lang: Lang, th
   drawFooter(ctx, lang, th, P, H - P + 10, W - P * 2, 27);
 }
 
+/** Link-preview layout (1200×630): what Facebook / WhatsApp / Messenger show for a shared map link. */
+function layoutOg(ctx: CanvasRenderingContext2D, map: LifeMap, lang: Lang, th: Theme) {
+  const H = 630;
+  const P = 56;
+  const colW = 590;
+  drawMap(ctx, map, lang, { x: 650, y: 18, w: 530, h: H - 36 }, th, { badge: 14, label: 17 });
+  const headerBottom = drawHeader(ctx, map, lang, th, P, P - 14, colW, 54);
+  drawTimeline(ctx, items(map, lang), lang, th, { x: P, y: headerBottom + 6, w: colW - 20, h: H - headerBottom - 120 }, 50);
+  drawFooter(ctx, lang, th, P, H - 34, colW, 19);
+}
+
+/** The link-preview image for a shared map (JPEG, 1200×630). */
+export async function renderOgCard(map: LifeMap, lang: Lang, theme: CardTheme = "paper"): Promise<Blob> {
+  await ensureFonts();
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200;
+  canvas.height = 630;
+  const ctx = canvas.getContext("2d")!;
+  const th = THEMES[theme];
+  ctx.fillStyle = th.bg;
+  ctx.fillRect(0, 0, 1200, 630);
+  layoutOg(ctx, map, lang, th);
+  return new Promise((resolve, reject) => canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("toBlob failed"))), "image/jpeg", 0.9));
+}
+
 /** Draws the shareable image and returns it as a high-quality JPEG (about 3× smaller than PNG for sending on mobile data). */
 export async function renderShareCard(map: LifeMap, lang: Lang, format: CardFormat = "post", theme: CardTheme = "paper"): Promise<Blob> {
   await ensureFonts();

@@ -38,7 +38,7 @@ function placesBy(map: LifeMap, lang: Lang) {
 }
 
 /** "Born in Satkhira, studied in Khulna, worked in Dhaka. Cox's Bazar is my favourite." */
-function storyLine(map: LifeMap, lang: Lang): string {
+export function storyLine(map: LifeMap, lang: Lang): string {
   const p = placesBy(map, lang);
   const parts: string[] = [];
   const add = (c: CategoryId, bn: (loc: string, plain: string) => string, en: (names: string) => string) => {
@@ -68,12 +68,12 @@ function storyLine(map: LifeMap, lang: Lang): string {
  * Ready-to-post captions, written from the user's own answers. Each ends with the
  * site link and hashtags so every shared image leads friends back to the site.
  */
-export function captions(map: LifeMap, lang: Lang): string[] {
+export function captions(map: LifeMap, lang: Lang, link: string = SITE_URL): string[] {
   const s = computeStats(map);
   const n = localizeDigits(s.districts, lang);
   const story = storyLine(map, lang);
   const born = placesBy(map, lang).get("born")?.[0];
-  const tail = (cta: string) => `${cta}\n👉 ${SITE_URL}\n\n${HASHTAGS}`;
+  const tail = (cta: string) => `${cta}\n👉 ${link}\n\n${HASHTAGS}`;
 
   if (lang === "bn") {
     return [
@@ -91,4 +91,11 @@ export function captions(map: LifeMap, lang: Lang): string[] {
       ? [`Guess which district I was born in? 😄`, `The answer's in the picture!`, "", tail("Your turn — make your own Bangladesh map")].join("\n")
       : [`This is my Bangladesh 🇧🇩`, story, "", tail("Tag someone who shared these districts with you!")].filter((l, i) => l || i === 2).join("\n"),
   ];
+}
+
+/** One-line summary for the shared link preview. */
+export function previewSummary(map: LifeMap, lang: Lang): string {
+  const story = storyLine(map, lang);
+  const q = lang === "bn" ? "আপনার বাংলাদেশ কোনটা?" : "What's your Bangladesh?";
+  return story ? `${story} ${q}` : q;
 }
