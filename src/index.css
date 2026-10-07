@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #faf6ef;
+  --color-paper-2: #f3ece0;
+  --color-ink: #1d1b18;
+  --color-ink-2: #4a443c;
+  --color-muted: #7a7166;
+  --color-line: #e8dfd0;
+  --color-green: #0b5d3b;
+  --color-green-2: #094c31;
+  --color-green-soft: #e3efe7;
+  --color-red: #d9473a;
+  --color-red-soft: #fbe9e5;
+  --color-land: #e9dfcc;
+  --color-land-hover: #dccfb6;
+
+  --font-sans: "Inter", "Noto Sans Bengali", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", "Noto Sans Bengali", Georgia, serif;
+  --font-bn: "Noto Sans Bengali", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-soft: 0 1px 2px rgb(40 30 10 / 0.04), 0 8px 24px -8px rgb(40 30 10 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(40 30 10 / 0.05), 0 24px 48px -16px rgb(40 30 10 / 0.22);
+
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-sheet-up: sheet-up 0.32s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-pop: pop 0.35s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes pop {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes pulse-ring {
+  0% { transform: scale(0.6); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+html[lang="bn"] body {
+  font-family: var(--font-bn);
+}
+/* Bangla glyphs need a little more line height than Latin to avoid clipped matras. */
+html[lang="bn"] .font-display {
+  font-family: var(--font-bn);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+::selection {
+  background: var(--color-green-soft);
+}
+
+.journey-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 2.4s cubic-bezier(0.45, 0.05, 0.3, 1) forwards;
+}
+
+.district {
+  transition: fill 0.25s ease, opacity 0.25s ease;
+  cursor: pointer;
+  outline: none;
+}
+.district:focus-visible {
+  stroke: var(--color-ink);
+  stroke-width: 2.5px;
+}
+
+.pulse-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-paper-2) 25%, #fbf8f3 50%, var(--color-paper-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
