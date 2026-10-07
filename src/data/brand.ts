@@ -2,5 +2,5 @@
 export const BRAND = {
   name: "Devstall",
   /** Optional website, e.g. "https://devstall.com". Set VITE_BRAND_URL at build time or edit here. */
-  url: (import.meta.env.VITE_BRAND_URL as string | undefined) ?? "",
+  url: (import.meta.env.VITE_BRAND_URL as string | undefined) ?? "https://devstall.com",
 };

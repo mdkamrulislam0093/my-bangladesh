@@ -26,7 +26,7 @@ Optional build-time settings:
 | Env var | Purpose |
 | --- | --- |
 | `VITE_SITE_HOST` | Domain printed on share images (defaults to the current host; hidden on localhost). |
-| `VITE_ANALYTICS_URL` | Endpoint that receives anonymous `POST {event, props}` counts. Unset = nothing is sent. |
+| `VITE_ANALYTICS_URL` | Where usage counts go. Default `/stats.php` (your own server); `off` disables. |
 
 ## How it works
 
@@ -68,6 +68,8 @@ On phones, "Share image" opens the system share menu (Facebook, Messenger, Whats
 - **Messenger:** gets the link (app on phones; copied and pasted on computers).
 
 All three show the map as the preview picture. Opening the link shows the map with a "make your own" button. If no PHP server is reachable (e.g. `npm run dev`), sharing falls back to copying or downloading the image.
+
+**Private stats.** `public/stats.php` counts visits, unique visitors (per day), maps started and finished, shares by app, downloads, map links created, views of shared maps and visits that came from them. It uses no cookies and stores no IPs; bots and link-preview crawlers are ignored. Open `https://<your-site>/stats.php?key=<STATS_KEY>` to see the dashboard (add `&format=json` for raw numbers). The key is set at the top of `stats.php`; change it if the link leaks. Data is kept in `mbd-stats/`.
 
 **Map data.** The boundaries come from [geoBoundaries](https://www.geoboundaries.org) BGD ADM2 (Bangladesh Bureau of Statistics / OCHA ROAP, CC BY 3.0 IGO). Run `npm run build:map` to regenerate them; it installs `mapshaper` temporarily, so that tool stays out of the project's dependencies.
 

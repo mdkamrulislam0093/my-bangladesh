@@ -1,9 +1,7 @@
 /**
- * Privacy-friendly product analytics: anonymous event counts only.
- * No cookies, no user ids, no third parties. Respects Do Not Track.
- *
- * The site is fully static, so nothing is sent unless VITE_ANALYTICS_URL is set at build
- * time (any endpoint that accepts `POST {event, props}`, e.g. a Plausible/PostHog proxy).
+ * Privacy-friendly usage counts, sent to our own public/stats.php (private dashboard there).
+ * Anonymous event names only: no cookies, no user ids, no third parties.
+ * Override the endpoint with VITE_ANALYTICS_URL; set it to "off" to disable.
  */
 export type AnalyticsEvent =
   | "landing_view"
@@ -17,15 +15,13 @@ export type AnalyticsEvent =
   | "link_share"
   | "demo_view";
 
-const ENDPOINT = import.meta.env.VITE_ANALYTICS_URL as string | undefined;
-
-function dnt(): boolean {
-  return navigator.doNotTrack === "1" || (window as { doNotTrack?: string }).doNotTrack === "1";
-}
+const CONFIGURED = import.meta.env.VITE_ANALYTICS_URL as string | undefined;
+// Local dev has no PHP, so don't send anything there.
+const ENDPOINT = CONFIGURED === "off" ? undefined : (CONFIGURED ?? (import.meta.env.DEV ? undefined : "/stats.php"));
 
 export function track(event: AnalyticsEvent, props?: Record<string, string>) {
   if (import.meta.env.DEV) console.debug("[analytics]", event, props ?? "");
-  if (!ENDPOINT || dnt()) return;
+  if (!ENDPOINT) return;
   try {
     const body = JSON.stringify({ event, props });
     if (!navigator.sendBeacon?.(ENDPOINT, new Blob([body], { type: "application/json" }))) {

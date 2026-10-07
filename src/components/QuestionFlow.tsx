@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { CATEGORY_BY_ID, type CategoryId } from "../data/categories";
 import { DISTRICT_BY_ID } from "../data/districts";
 import { useI18n } from "../i18n/I18nProvider";
+import { track } from "../lib/analytics";
 import { draftActions } from "../lib/draftStore";
 import { districtCategories, timeline } from "../lib/mapModel";
 import { storage } from "../lib/storage";
@@ -90,7 +91,10 @@ export function QuestionFlow({ map, onDone, onShare }: { map: LifeMap; onDone: (
 
   const next = () => {
     setIndex(index + 1);
-    if (last) onDone();
+    if (last) {
+      track("map_completed");
+      onDone();
+    }
   };
 
   const pick = (id: string) => {

@@ -8,6 +8,8 @@ DirectoryIndex index.html
 
   # Shared map links: /s/{id} (page with preview tags) and /s/{id}.jpg (preview image).
   RewriteRule ^mbd-share(/|$) - [F,L]
+  RewriteRule ^mbd-stats(/|$) - [F,L]
+  RewriteRule ^stats-lib\.php$ - [F,L]
   RewriteRule ^s/([a-z0-9]{6,16})\.jpg$ share.php?img=$1 [QSA,L]
   RewriteRule ^s/([a-z0-9]{6,16})/?$ share.php?id=$1 [QSA,L]
 

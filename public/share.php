@@ -10,6 +10,7 @@
  */
 
 declare(strict_types=1);
+require __DIR__ . '/stats-lib.php';
 
 const MAX_BYTES = 1500000;
 const UPLOADS_PER_10_MIN = 40;
@@ -87,6 +88,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
   ];
   file_put_contents(data_dir() . "/$id.jpg", $bin);
   file_put_contents(data_dir() . "/$id.json", json_encode($meta, JSON_UNESCAPED_UNICODE));
+  mbd_count(['link_created' => 1]);
   json_out(201, ['id' => $id, 'url' => origin() . "/s/$id"]);
 }
 
@@ -116,6 +118,7 @@ if (!$meta) {
   header('Location: /', true, 302);
   exit;
 }
+if (!mbd_is_bot()) mbd_count(['share_page_view' => 1]);
 $bn = $meta['lang'] !== 'en';
 $title = $meta['title'] . ' 🇧🇩';
 $desc = $meta['desc'] ?: ($bn ? 'যে জায়গাগুলো আমার গল্প গড়েছে। আপনার বাংলাদেশ কোনটা?' : 'The places that made my story. What\'s your Bangladesh?');
@@ -166,16 +169,16 @@ header('Cache-Control: public, max-age=300');
 </head>
 <body>
 <main>
-  <a class="brand" href="/"><i></i><?= $bn ? 'আমার বাংলাদেশ' : 'My Bangladesh' ?></a>
+  <a class="brand" href="/?ref=share"><i></i><?= $bn ? 'আমার বাংলাদেশ' : 'My Bangladesh' ?></a>
   <h1><?= e($title) ?></h1>
   <p class="sub"><?= e($desc) ?></p>
   <img class="map" src="<?= e($img) ?>" width="1200" height="630" alt="<?= e($meta['title']) ?>" />
   <div class="cta">
     <h2><?= $bn ? 'আপনার বাংলাদেশ কোনটা?' : "What's your Bangladesh?" ?></h2>
     <p><?= e($ctaSub) ?></p>
-    <a href="/"><?= e($cta) ?> 🇧🇩</a>
+    <a href="/?ref=share"><?= e($cta) ?> 🇧🇩</a>
   </div>
-  <footer>Powered by <b>Devstall</b></footer>
+  <footer>Powered by <a href="https://devstall.com" target="_blank" rel="noopener" style="color:#1d1b18;font-weight:700">Devstall</a></footer>
 </main>
 </body>
 </html>

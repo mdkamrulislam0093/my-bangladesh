@@ -27,8 +27,11 @@ export default function Home() {
 
   useOverlayHistory(sharing, () => setSharing(false));
 
+  // Count the visit; "?ref=share" marks people who came from someone's shared map.
   useEffect(() => {
-    track("landing_view");
+    const params = new URLSearchParams(location.search);
+    track("landing_view", params.get("ref") === "share" ? { ref: "share" } : undefined);
+    if (params.has("ref")) history.replaceState(null, "", location.pathname);
   }, []);
   useEffect(() => {
     draftActions.setLanguage(lang);
